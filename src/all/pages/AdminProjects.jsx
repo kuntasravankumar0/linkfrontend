@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { templateService, contactService, chatService, API_BASE_URL } from '../api/api';
 import { getChatClient } from '../api/chatRealtime';
+import { invalidateAllCaches } from '../../utils/cache';
 import {
   CheckCircle, XCircle, Trash2, Loader2, ShieldCheck,
   Search, Edit3, X, Save, RefreshCw, Tag, Layers, Copy, Check,
@@ -281,6 +282,7 @@ function ProjectsPanel() {
       if (action === 'approve') await templateService.approve(id);
       if (action === 'reject')  await templateService.reject(id);
       if (action === 'delete')  await templateService.delete(id);
+      invalidateAllCaches(); // Clear frontend cache so Home page shows fresh data
       toast.success(`${action.charAt(0).toUpperCase() + action.slice(1)} successful`);
       fetchAll(true);
     } catch { toast.error(`Failed to ${action}`); }
@@ -319,6 +321,7 @@ function ProjectsPanel() {
     };
     try {
       await templateService.updateByUuid(editingProject.uniqueId, payload);
+      invalidateAllCaches(); // Clear frontend cache
       toast.success('Project updated');
       setEditingProject(null);
       fetchAll(true);

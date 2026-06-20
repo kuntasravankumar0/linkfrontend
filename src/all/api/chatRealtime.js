@@ -103,6 +103,19 @@ export class ChatRealtimeClient {
         this._emit('heartbeat', JSON.parse(e.data));
       });
 
+      // Server requests reconnect (Vercel timeout approaching)
+      this.eventSource.addEventListener('reconnect', (e) => {
+        const data = JSON.parse(e.data);
+        const delay = (data.after || 1) * 1000;
+        this.eventSource?.close();
+        this.eventSource = null;
+        this.reconnectAttempts = 0; // Reset — this is a planned reconnect
+        this._setState(ConnectionState.RECONNECTING);
+        this.reconnectTimer = setTimeout(() => {
+          if (!this._destroyed) this.connect();
+        }, delay);
+      });
+
       this.eventSource.onerror = () => {
         if (this._destroyed) return;
         this._handleDisconnect();

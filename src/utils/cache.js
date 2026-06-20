@@ -6,7 +6,7 @@
  */
 
 const CACHE_PREFIX = 'foryou_cache_';
-const DEFAULT_TTL = 2 * 60 * 1000; // 2 minutes — fresh data threshold
+const DEFAULT_TTL = 30 * 1000; // 30 seconds — keeps data fresh after admin actions
 
 /**
  * Get cached data if it exists and is fresh enough.
