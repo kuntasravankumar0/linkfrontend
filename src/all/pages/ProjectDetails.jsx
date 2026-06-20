@@ -42,27 +42,31 @@ export default function ProjectDetails() {
 
   useEffect(() => {
     let mounted = true;
-    const fetchDetails = async (attempt = 1) => {
+    let retryCount = 0;
+    const maxRetries = 3;
+
+    const fetchDetails = async () => {
       try {
         const response = await templateService.getById(id);
-        if (mounted) setProject(response.data);
-      } catch (err) {
-        // Retry once on timeout/network error
-        if (attempt < 2 && (!err.response || err.response.status >= 500)) {
-          setTimeout(() => { if (mounted) fetchDetails(attempt + 1); }, 2000);
-          return;
-        }
         if (mounted) {
-          toast.error('Project not found');
-          navigate('/');
+          setProject(response.data);
+          setLoading(false);
         }
-      } finally {
-        if (mounted) setLoading(false);
+      } catch (err) {
+        retryCount++;
+        // Retry up to 3 times with increasing delay (covers Vercel cold start)
+        if (mounted && retryCount <= maxRetries) {
+          setTimeout(() => { if (mounted) fetchDetails(); }, retryCount * 2000);
+        } else if (mounted) {
+          // Only show error after all retries exhausted
+          toast.error('Could not load project. Please try again.');
+          setLoading(false);
+        }
       }
     };
     fetchDetails();
     return () => { mounted = false; };
-  }, [id, navigate]);
+  }, [id]);
 
   const copyCode = async () => {
     if (!project?.implementation) return;
@@ -77,7 +81,23 @@ export default function ProjectDetails() {
   };
 
   if (loading) return <Skeleton />;
-  if (!project) return null;
+  if (!project) return (
+    <div className="max-w-6xl mx-auto px-4 py-20 text-center space-y-4">
+      <div className="text-5xl">😕</div>
+      <h2 className="text-xl font-black text-slate-900 dark:text-white">Could not load project</h2>
+      <p className="text-slate-400 text-sm">The server might be waking up. Try again.</p>
+      <div className="flex items-center justify-center gap-3">
+        <button onClick={() => { setLoading(true); window.location.reload(); }}
+          className="px-6 py-3 bg-brand-primary text-white rounded-xl font-bold text-sm hover:bg-indigo-700 transition-all">
+          Retry
+        </button>
+        <button onClick={() => navigate('/')}
+          className="px-6 py-3 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl font-bold text-sm hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
+          Go Home
+        </button>
+      </div>
+    </div>
+  );
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 pb-20 px-4">
