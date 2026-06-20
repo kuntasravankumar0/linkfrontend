@@ -23,7 +23,7 @@ function checkRateLimit() {
 const api = axios.create({
   baseURL,
   headers: { 'Content-Type': 'application/json' },
-  timeout: 15_000,
+  timeout: 25_000,
   withCredentials: false,
 });
 

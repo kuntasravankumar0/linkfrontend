@@ -41,18 +41,27 @@ export default function ProjectDetails() {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    const fetchDetails = async () => {
+    let mounted = true;
+    const fetchDetails = async (attempt = 1) => {
       try {
         const response = await templateService.getById(id);
-        setProject(response.data);
-      } catch {
-        toast.error('Project not found');
-        navigate('/');
+        if (mounted) setProject(response.data);
+      } catch (err) {
+        // Retry once on timeout/network error
+        if (attempt < 2 && (!err.response || err.response.status >= 500)) {
+          setTimeout(() => { if (mounted) fetchDetails(attempt + 1); }, 2000);
+          return;
+        }
+        if (mounted) {
+          toast.error('Project not found');
+          navigate('/');
+        }
       } finally {
-        setLoading(false);
+        if (mounted) setLoading(false);
       }
     };
     fetchDetails();
+    return () => { mounted = false; };
   }, [id, navigate]);
 
   const copyCode = async () => {

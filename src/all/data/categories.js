@@ -122,8 +122,17 @@ export function parseSubCategory(value) {
     const [main, sub] = value.split(' > ');
     return { main: main.trim(), sub: sub.trim() };
   }
-  // Legacy: plain string — treat as subcategory with no main
-  return { main: null, sub: value };
+  // Check if the plain string matches a known main category label
+  const matchedCat = CATEGORIES.find(c => c.label.toLowerCase() === value.trim().toLowerCase());
+  if (matchedCat) return { main: matchedCat.label, sub: null };
+  // Check if it matches a subcategory of any known category (e.g. "React" → Frontend > React)
+  for (const cat of CATEGORIES) {
+    if (cat.subs?.some(s => s.toLowerCase() === value.trim().toLowerCase())) {
+      return { main: cat.label, sub: value.trim() };
+    }
+  }
+  // Unknown — treat as main category "Other" with the value as sub
+  return { main: 'Other', sub: value.trim() };
 }
 
 /** Build the stored string from main + sub */
