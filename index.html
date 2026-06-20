@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <!-- ── Security (HTTP-header-only directives removed from meta — set via vercel.json) ── -->
+    <!-- Referrer policy — safe to set via meta -->
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+
+    <!-- Content Security Policy — connect-src only (safe in meta element) -->
+    <script type="module">
+      try {
+        const connectSrc = import.meta.env.VITE_CSP_CONNECT_SRC;
+        if (connectSrc) {
+          const csp = [
+            "default-src 'self'",
+            "script-src 'self' 'unsafe-inline'",
+            "style-src 'self' 'unsafe-inline'",
+            "img-src 'self' data: https: blob:",
+            "font-src 'self' data:",
+            `connect-src 'self' ${connectSrc}`,
+            "base-uri 'self'",
+            "form-action 'self'"
+          ].join('; ');
+          const m = document.createElement('meta');
+          m.httpEquiv = 'Content-Security-Policy';
+          m.content = csp;
+          document.head.appendChild(m);
+        }
+      } catch (e) {
+        console.warn('Failed to apply runtime CSP:', e);
+      }
+    </script>
+
+    <!-- ── Favicon / Icons ── -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.svg" />
+
+    <!-- ── Viewport & Theme ── -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#4f46e5" />
+
+    <!-- ── Prevent dark flash — apply saved theme before React loads ── -->
+    <script>
+      (function() {
+        try {
+          var t = localStorage.getItem('foryou_theme');
+          if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          }
+        } catch(e) {}
+      })();
+    </script>
+
+    <!-- ── SEO ── -->
+    <meta name="description" content="ForYou — Multipurpose project gallery for hosting, AI tools, software, deployment, databases and more." />
+    <meta name="keywords" content="projects, hosting, AI tools, software, deployment, database, frontend, backend" />
+    <meta name="author" content="ForYou Platform" />
+
+    <!-- ── Open Graph ── -->
+    <meta property="og:title" content="ForYou — Project Gallery" />
+    <meta property="og:description" content="Everything you need, all in one place." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/logo.svg" />
+
+    <!-- ── Twitter Card ── -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="ForYou — Project Gallery" />
+    <meta name="twitter:description" content="Hosting, AI tools, software, deployment and more." />
+
+    <title>ForYou — Project Gallery</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

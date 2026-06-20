@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="url(#bg)"/>
+  <!-- Chain link icon — two connected rings -->
+  <path d="M20 28 C20 22 28 22 28 28 L28 36 C28 42 20 42 20 36 Z" stroke="white" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M36 28 C36 22 44 22 44 28 L44 36 C44 42 36 42 36 36 Z" stroke="white" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <line x1="28" y1="32" x2="36" y2="32" stroke="white" stroke-width="4" stroke-linecap="round"/>
+</svg>

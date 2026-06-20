@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 64" fill="none">
+  <defs>
+    <linearGradient id="lg" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#4f46e5"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <linearGradient id="tg" x1="0" y1="0" x2="200" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#4f46e5"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+  </defs>
+  <!-- Icon box -->
+  <rect x="0" y="8" width="48" height="48" rx="12" fill="url(#lg)"/>
+  <!-- Lightning bolt -->
+  <path d="M14 16 L28 16 L22 28 L32 28 L16 48 L20 32 L10 32 Z" fill="white" opacity="0.95"/>
+  <!-- "for" text -->
+  <text x="60" y="42" font-family="system-ui, -apple-system, sans-serif"
+        font-weight="900" font-size="28" fill="#0f172a" letter-spacing="-1">for</text>
+  <!-- "you" text with gradient -->
+  <text x="104" y="42" font-family="system-ui, -apple-system, sans-serif"
+        font-weight="900" font-size="28" fill="url(#tg)" letter-spacing="-1">you</text>
+</svg>
