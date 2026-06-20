@@ -384,100 +384,95 @@ function ProjectsPanel() {
       {loading ? (
         <div className="flex justify-center py-24"><Loader2 size={36} className="animate-spin text-brand-primary" /></div>
       ) : (
-        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700">
-                <th className="px-6 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest">Project</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest hidden lg:table-cell">UUID</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest hidden md:table-cell">Category</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest hidden md:table-cell">Access</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest">Status</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
-              {filtered.map(project => {
-                const isActing = actionLoading?.includes(String(project.id));
-                const { main, sub } = parseSubCategory(project.subCategory);
-                const cat = CATEGORIES.find(c => c.label === main);
-                return (
-                  <tr key={project.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="font-bold text-slate-900 dark:text-white text-sm">{project.projectName}</div>
-                      <div className="text-[9px] text-slate-300 font-mono mt-0.5 uppercase flex items-center gap-1 flex-wrap">
-                        {main && <span>{cat?.icon} {main}</span>}
-                        {main && sub && <span>›</span>}
-                        {sub && <span className="text-brand-primary/70">{sub}</span>}
-                        {!main && !sub && project.subCategory && <span>{project.subCategory}</span>}
-                        <span className="text-slate-200 dark:text-slate-700">· #{project.id}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 hidden lg:table-cell"><UuidBadge uuid={project.uniqueId} /></td>
-                    <td className="px-6 py-4 hidden md:table-cell">
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        {main && (
-                          <span className={`text-[10px] font-black px-2 py-1 rounded-lg border uppercase tracking-tight
-                            ${cat?.color || 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-350 border-slate-200 dark:border-slate-700'}`}>
-                            {cat?.icon} {main}
-                          </span>
-                        )}
-                        {sub && (
-                          <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-brand-primary/10 text-brand-primary border border-brand-primary/20 uppercase tracking-tight">
-                            {sub}
-                          </span>
-                        )}
-                        {!main && !sub && project.subCategory && (
-                          <span className="text-[10px] text-slate-400 dark:text-slate-550 font-mono">{project.subCategory}</span>
-                        )}
-                        {!project.subCategory && (
-                          <span className="text-[10px] text-slate-300 dark:text-slate-600 italic">None</span>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 hidden md:table-cell">
-                      <span className={`text-[10px] font-black px-2.5 py-1 rounded-full uppercase
+        <div className="space-y-2">
+          {/* Desktop table header - hidden on mobile */}
+          <div className="hidden md:grid md:grid-cols-[1fr_auto_auto_auto] gap-4 px-4 py-2 text-[10px] font-black uppercase text-slate-400 tracking-widest">
+            <span>Project</span>
+            <span className="w-20 text-center">Access</span>
+            <span className="w-24 text-center">Status</span>
+            <span className="w-28 text-right">Actions</span>
+          </div>
+
+          {filtered.map(project => {
+            const isActing = actionLoading?.includes(String(project.id));
+            const { main, sub } = parseSubCategory(project.subCategory);
+            const cat = CATEGORIES.find(c => c.label === main);
+            return (
+              <div key={project.id}
+                className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-700 p-4 hover:shadow-md transition-all">
+                {/* Mobile: stacked layout / Desktop: grid */}
+                <div className="md:grid md:grid-cols-[1fr_auto_auto_auto] md:items-center gap-4">
+                  {/* Project info */}
+                  <div className="min-w-0">
+                    <div className="font-bold text-slate-900 dark:text-white text-sm truncate">{project.projectName}</div>
+                    <div className="text-[9px] text-slate-400 font-mono mt-0.5 flex items-center gap-1 flex-wrap">
+                      {main && <span>{cat?.icon} {main}</span>}
+                      {sub && <span className="text-brand-primary/70">› {sub}</span>}
+                      <span className="text-slate-300 dark:text-slate-600">#{project.id}</span>
+                    </div>
+                  </div>
+
+                  {/* Access badge */}
+                  <div className="hidden md:block w-20 text-center">
+                    <span className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase
+                      ${project.accessType === 'FREE' ? 'badge-free' : project.accessType === 'PAID' ? 'badge-paid' : 'badge-both'}`}>
+                      {project.accessType}
+                    </span>
+                  </div>
+
+                  {/* Status badge */}
+                  <div className="hidden md:block w-24 text-center">
+                    <span className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-tight
+                      ${project.approvalStatus === 'APPROVED' ? 'badge-approved' : project.approvalStatus === 'REJECTED' ? 'badge-rejected' : 'badge-pending'}`}>
+                      {project.approvalStatus}
+                    </span>
+                  </div>
+
+                  {/* Mobile: badges + actions row */}
+                  <div className="flex items-center justify-between mt-2 md:mt-0 md:w-28 md:justify-end">
+                    {/* Mobile-only badges */}
+                    <div className="flex items-center gap-1.5 md:hidden">
+                      <span className={`text-[9px] font-black px-2 py-0.5 rounded-full uppercase
                         ${project.accessType === 'FREE' ? 'badge-free' : project.accessType === 'PAID' ? 'badge-paid' : 'badge-both'}`}>
                         {project.accessType}
                       </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className={`text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-tight
+                      <span className={`text-[9px] font-black px-2 py-0.5 rounded-full uppercase
                         ${project.approvalStatus === 'APPROVED' ? 'badge-approved' : project.approvalStatus === 'REJECTED' ? 'badge-rejected' : 'badge-pending'}`}>
                         {project.approvalStatus}
                       </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center justify-end gap-1">
-                        {project.approvalStatus === 'PENDING' && (
-                          <>
-                            <button onClick={() => handleAction('approve', project.id)} disabled={isActing}
-                              className="p-2 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-xl transition-all disabled:opacity-40" title="Approve">
-                              <CheckCircle size={17} />
-                            </button>
-                            <button onClick={() => handleAction('reject', project.id)} disabled={isActing}
-                              className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all disabled:opacity-40" title="Reject">
-                              <XCircle size={17} />
-                            </button>
-                          </>
-                        )}
-                        <button onClick={() => openEdit(project)}
-                          className="p-2 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl transition-all" title="Edit">
-                          <Edit3 size={17} />
-                        </button>
-                        <button onClick={() => handleAction('delete', project.id)} disabled={isActing}
-                          className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all disabled:opacity-40" title="Delete">
-                          <Trash2 size={17} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex items-center gap-0.5">
+                      {project.approvalStatus === 'PENDING' && (
+                        <>
+                          <button onClick={() => handleAction('approve', project.id)} disabled={isActing}
+                            className="p-1.5 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-all disabled:opacity-40" title="Approve">
+                            <CheckCircle size={16} />
+                          </button>
+                          <button onClick={() => handleAction('reject', project.id)} disabled={isActing}
+                            className="p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all disabled:opacity-40" title="Reject">
+                            <XCircle size={16} />
+                          </button>
+                        </>
+                      )}
+                      <button onClick={() => openEdit(project)}
+                        className="p-1.5 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all" title="Edit">
+                        <Edit3 size={16} />
+                      </button>
+                      <button onClick={() => handleAction('delete', project.id)} disabled={isActing}
+                        className="p-1.5 text-slate-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all disabled:opacity-40" title="Delete">
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+
           {filtered.length === 0 && (
-            <div className="py-20 text-center">
+            <div className="py-20 text-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-700">
               <div className="text-4xl mb-3">📋</div>
               <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">No projects found</p>
             </div>
